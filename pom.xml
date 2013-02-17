@@ -4,7 +4,7 @@
 
   <groupId>com.lewisd.ksp</groupId>
   <artifactId>craftstats-parent</artifactId>
-  <version>0.1</version>
+  <version>0.2-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>KSP Craft Stats</name>
@@ -27,7 +27,7 @@
     <connection>scm:git:git@github.com:lewisd32/craftstats.git</connection>
     <url>scm:git:git@github.com:lewisd32/craftstats.git</url>
     <developerConnection>scm:git:git@github.com:lewisd32/craftstats.git</developerConnection>
-    <tag>craftstats-parent-0.1</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <build>
