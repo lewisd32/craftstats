@@ -1,0 +1,23 @@
+ 
+Craft merge:
+
+Merge 2 craft files
+Each craft file must have one decoupler with one side disconnected
+ * one decoupler will be removed in the merge
+Payload must be correctly rotated for merge.  No checking or changing will be done.
+ * ie. decoupler must be facing up on launcher, down on payload.
+All capsules will be retained.
+ * if there is more than one, the primary capsule in launcher will continue to be primary capsule. 
+Renumber UIDs in payload to ensure no overlap with launcher.
+ * find highest UID in launcher, and renumber everything in payload to higher numbers.
+ 1. read launcher craft to find highest launcher UID
+ 2. read payload craft to generate mapping of old payload UID to new payload UID
+ 3. copy launcher craft file into new file, verbatim.
+ 4. stream payload craft file into new file, skipping header, and doing basically sed operation to replace payload UIDs using mapping
+  * find decouplers
+  * pick one decoupler to remove
+  * calculate how to translate payload coordinates
+  * translate coordinates
+  * attach to decoupler
+  * remove one decoupler
+  
