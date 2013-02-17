@@ -4,7 +4,7 @@
   <parent>
     <groupId>com.lewisd.ksp</groupId>
     <artifactId>craftstats-parent</artifactId>
-    <version>0.1-SNAPSHOT</version>
+    <version>0.1</version>
   </parent>
 
   <artifactId>craftstats-core</artifactId>
