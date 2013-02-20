@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
+import org.apache.commons.lang.StringUtils;
 
 import com.lewisd.ksp.craftstats.gamedata.Part;
 import com.lewisd.ksp.craftstats.gamedata.loader.KerbalContext;
@@ -67,13 +68,14 @@ public class PartHierarchy extends AbstractVehicleMain {
         System.out.print(prefix + sym + "-" + part.getTitle());
         if (verbose) {
             out.print(" (" + parent.getId() + ")");
+            final List<String> texts = new ArrayList<>();
+            texts.add(String.format("mass %.4f/%.4ft", parent.getMass(), parent.getDryMass()));
             if (parent.getQueuedStage() >= 0) {
-                final StringBuilder sb = new StringBuilder();
                 if (parent.getQueuedStage() >= 0) {
-                    sb.append("sqor=" + parent.getQueuedStage());
+                    texts.add(("sqor=" + parent.getQueuedStage()));
                 }
-                out.print(" (" + sb + ")");
             }
+            out.print(" (" + StringUtils.join(texts, ", ") + ")");
         }
         out.println();
         final List<VehiclePart> children = new ArrayList<>();

@@ -89,6 +89,7 @@ public class Engine {
     }
 
     public boolean consumeFuel(final double mass) {
+        boolean outOfFuel = false;
         if (preferredFuelTanks.size() == 0) {
             return false;
         }
@@ -100,12 +101,12 @@ public class Engine {
                 final double resourceMass = fuelTank.getResourceMass(resource);
                 final double newResourceMass = resourceMass - massPerTank * ratio;
                 if (newResourceMass < 0) {
-                    return false;
+                    outOfFuel = true;
                 }
-                fuelTank.setResourceMass(resource, newResourceMass);
+                fuelTank.setResourceMass(resource, Math.max(0, newResourceMass));
             }
         }
-        return true;
+        return !outOfFuel;
     }
 
     private static double getIsp(final CfgProperties ispCfgProperties, final String valuePrefix) {

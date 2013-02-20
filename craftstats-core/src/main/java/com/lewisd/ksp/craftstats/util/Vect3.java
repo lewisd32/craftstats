@@ -79,4 +79,74 @@ public class Vect3 {
         // TODO: implement rotation around each of these axis
     }
 
+    public Vect3 unitVector(final double len) {
+        return Vect3.forXYAngle(getXYAngle(), len);
+    }
+
+    public double getXYAngle() {
+        return normalizeAngle(Math.toDegrees(Math.atan2(y, x)) + 90);
+    }
+
+    public static Vect3 forXYAngle(final double positionAngle, final double velocity) {
+        final double angle = normalizeAngle(positionAngle - 90);
+        final double radians = Math.toRadians(angle);
+
+        final double x = Math.cos(radians) * velocity;
+        final double y = Math.sin(radians) * velocity;
+        return new Vect3(x, y, 0);
+    }
+
+    private static double normalizeAngle(final double angle) {
+        if (angle < 0) {
+            return angle + 360;
+        } else if (angle >= 360) {
+            return angle - 360;
+        } else {
+            return angle;
+        }
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%f, %f, %f", x, y, z);
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        long temp;
+        temp = Double.doubleToLongBits(x);
+        result = prime * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(y);
+        result = prime * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(z);
+        result = prime * result + (int) (temp ^ (temp >>> 32));
+        return result;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof Vect3)) {
+            return false;
+        }
+        final Vect3 other = (Vect3) obj;
+        if (Double.doubleToLongBits(x) != Double.doubleToLongBits(other.x)) {
+            return false;
+        }
+        if (Double.doubleToLongBits(y) != Double.doubleToLongBits(other.y)) {
+            return false;
+        }
+        if (Double.doubleToLongBits(z) != Double.doubleToLongBits(other.z)) {
+            return false;
+        }
+        return true;
+    }
+
 }

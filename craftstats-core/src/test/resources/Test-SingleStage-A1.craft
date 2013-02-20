@@ -3,7 +3,7 @@ version = 0.18.4
 type = VAB
 PART
 {
-	part = probeCoreOcto_4294823438
+	part = probeCoreOcto_4294877796
 	partName = CommandPod
 	pos = -0.07834244,10.32163,0.005346298
 	rot = 0,0,0,1
@@ -14,16 +14,16 @@ PART
 	sidx = -1
 	sqor = -1
 	attm = 0
-	link = sensorBarometer_4294823410
-	link = sensorGravimeter_4294823388
-	link = sensorAccelerometer_4294823366
-	link = ant_4294823344
-	link = EngineerChip_4294823324
-	link = sensorThermometer_4294823298
-	link = batteryPack_4294823276
-	link = noseConeAdapter_4294823242
-	attN = bottom,noseConeAdapter_4294823242
-	attN = top,ant_4294823344
+	link = sensorBarometer_4294877768
+	link = sensorGravimeter_4294877746
+	link = sensorAccelerometer_4294877724
+	link = ant_4294877702
+	link = sensorThermometer_4294877656
+	link = batteryPack_4294877634
+	link = noseConeAdapter_4294877600
+	link = AtmosphereRemover_4294869478
+	attN = bottom,noseConeAdapter_4294877600
+	attN = top,ant_4294877702
 	EVENTS
 	{
 		MakeReference
@@ -67,7 +67,7 @@ PART
 }
 PART
 {
-	part = sensorBarometer_4294823410
+	part = sensorBarometer_4294877768
 	partName = Part
 	pos = -0.4219503,10.31449,0.005346319
 	rot = 0,-0.7071068,0,-0.7071068
@@ -78,7 +78,7 @@ PART
 	sidx = -1
 	sqor = -1
 	attm = 1
-	srfN = srfAttach,probeCoreOcto_4294823438
+	srfN = srfAttach,probeCoreOcto_4294877796
 	EVENTS
 	{
 	}
@@ -115,7 +115,7 @@ PART
 }
 PART
 {
-	part = sensorGravimeter_4294823388
+	part = sensorGravimeter_4294877746
 	partName = Part
 	pos = -0.07834244,10.32559,0.3487498
 	rot = 0,1,0,0
@@ -126,7 +126,7 @@ PART
 	sidx = -1
 	sqor = -1
 	attm = 1
-	srfN = srfAttach,probeCoreOcto_4294823438
+	srfN = srfAttach,probeCoreOcto_4294877796
 	EVENTS
 	{
 	}
@@ -163,7 +163,7 @@ PART
 }
 PART
 {
-	part = sensorAccelerometer_4294823366
+	part = sensorAccelerometer_4294877724
 	partName = Part
 	pos = -0.07834247,10.32453,-0.3380183
 	rot = 0,-4.371139E-08,0,-1
@@ -174,7 +174,7 @@ PART
 	sidx = -1
 	sqor = -1
 	attm = 1
-	srfN = srfAttach,probeCoreOcto_4294823438
+	srfN = srfAttach,probeCoreOcto_4294877796
 	EVENTS
 	{
 	}
@@ -211,7 +211,7 @@ PART
 }
 PART
 {
-	part = ant_4294823344
+	part = ant_4294877702
 	partName = TelemachusDataLink
 	pos = -0.07834244,11.06246,0.005346298
 	rot = 0,0,0,1
@@ -222,7 +222,7 @@ PART
 	sidx = -1
 	sqor = -1
 	attm = 0
-	attN = bottom,probeCoreOcto_4294823438
+	attN = bottom,probeCoreOcto_4294877796
 	EVENTS
 	{
 	}
@@ -232,39 +232,7 @@ PART
 }
 PART
 {
-	part = EngineerChip_4294823324
-	partName = Part
-	pos = 0.3038056,10.32615,0.005346319
-	rot = 0.5,0.5,-0.5,0.5
-	attRot = 0,0,0,1
-	mir = 1,1,1
-	istg = 0
-	dstg = 0
-	sidx = -1
-	sqor = -1
-	attm = 1
-	srfN = srfAttach,probeCoreOcto_4294823438
-	EVENTS
-	{
-	}
-	ACTIONS
-	{
-	}
-	MODULE
-	{
-		name = BuildEngineer
-		isEnabled = True
-		EVENTS
-		{
-		}
-		ACTIONS
-		{
-		}
-	}
-}
-PART
-{
-	part = sensorThermometer_4294823298
+	part = sensorThermometer_4294877656
 	partName = Part
 	pos = -0.3212605,10.34457,0.2482643
 	rot = 0,-0.9238795,0,-0.3826835
@@ -275,7 +243,7 @@ PART
 	sidx = -1
 	sqor = -1
 	attm = 1
-	srfN = srfAttach,probeCoreOcto_4294823438
+	srfN = srfAttach,probeCoreOcto_4294877796
 	EVENTS
 	{
 	}
@@ -312,7 +280,7 @@ PART
 }
 PART
 {
-	part = batteryPack_4294823276
+	part = batteryPack_4294877634
 	partName = Part
 	pos = -0.3211367,10.3603,-0.237448
 	rot = 0,-0.3826834,0,-0.9238796
@@ -323,7 +291,7 @@ PART
 	sidx = -1
 	sqor = -1
 	attm = 1
-	srfN = srfAttach,probeCoreOcto_4294823438
+	srfN = srfAttach,probeCoreOcto_4294877796
 	EVENTS
 	{
 	}
@@ -333,7 +301,7 @@ PART
 }
 PART
 {
-	part = noseConeAdapter_4294823242
+	part = noseConeAdapter_4294877600
 	partName = Strut
 	pos = -0.07834244,9.440798,0.005346298
 	rot = 0,0,0,1
@@ -344,13 +312,14 @@ PART
 	sidx = -1
 	sqor = -1
 	attm = 0
-	link = stackDecoupler_4294823214
-	link = solarPanels4_4294822876
-	link = solarPanels4_4294822778
-	link = solarPanels4_4294822680
-	link = solarPanels4_4294822582
-	attN = top,probeCoreOcto_4294823438
-	attN = bottom01,stackDecoupler_4294823214
+	link = stackDecoupler_4294877572
+	link = solarPanels4_4294877234
+	link = solarPanels4_4294877136
+	link = solarPanels4_4294877038
+	link = solarPanels4_4294876940
+	link = EngineerChipFlight_4294872736
+	attN = top,probeCoreOcto_4294877796
+	attN = bottom01,stackDecoupler_4294877572
 	EVENTS
 	{
 	}
@@ -360,7 +329,7 @@ PART
 }
 PART
 {
-	part = stackDecoupler_4294823214
+	part = stackDecoupler_4294877572
 	partName = Part
 	pos = -0.07834244,8.825746,0.005346298
 	rot = 0,0,0,1
@@ -371,9 +340,9 @@ PART
 	sidx = 0
 	sqor = 0
 	attm = 0
-	link = sasModule_4294823178
-	attN = bottom,sasModule_4294823178
-	attN = top,noseConeAdapter_4294823242
+	link = sasModule_4294877536
+	attN = bottom,sasModule_4294877536
+	attN = top,noseConeAdapter_4294877600
 	EVENTS
 	{
 	}
@@ -410,7 +379,7 @@ PART
 }
 PART
 {
-	part = sasModule_4294823178
+	part = sasModule_4294877536
 	partName = SASModule
 	pos = -0.07834244,8.51053,0.005346298
 	rot = 0,0,0,1
@@ -421,9 +390,9 @@ PART
 	sidx = -1
 	sqor = -1
 	attm = 0
-	link = solidBooster1-1_4294823154
-	attN = bottom,solidBooster1-1_4294823154
-	attN = top,stackDecoupler_4294823214
+	link = solidBooster1-1_4294877512
+	attN = bottom,solidBooster1-1_4294877512
+	attN = top,stackDecoupler_4294877572
 	EVENTS
 	{
 	}
@@ -433,7 +402,7 @@ PART
 }
 PART
 {
-	part = solidBooster1-1_4294823154
+	part = solidBooster1-1_4294877512
 	partName = Part
 	pos = -0.07834244,4.388811,0.005346298
 	rot = 0,0,0,1
@@ -444,9 +413,9 @@ PART
 	sidx = 0
 	sqor = 1
 	attm = 0
-	link = launchClamp1_4294823088
-	link = launchClamp1_4294822982
-	attN = top,sasModule_4294823178
+	link = launchClamp1_4294877446
+	link = launchClamp1_4294877340
+	attN = top,sasModule_4294877536
 	EVENTS
 	{
 	}
@@ -506,7 +475,7 @@ PART
 }
 PART
 {
-	part = launchClamp1_4294823088
+	part = launchClamp1_4294877446
 	partName = Strut
 	pos = -0.07834219,1.267488,1.42793
 	rot = 0,-1,0,8.742278E-08
@@ -517,8 +486,8 @@ PART
 	sidx = 1
 	sqor = 1
 	attm = 1
-	sym = launchClamp1_4294822982
-	srfN = srfAttach,solidBooster1-1_4294823154
+	sym = launchClamp1_4294877340
+	srfN = srfAttach,solidBooster1-1_4294877512
 	EVENTS
 	{
 	}
@@ -604,7 +573,7 @@ PART
 }
 PART
 {
-	part = launchClamp1_4294822982
+	part = launchClamp1_4294877340
 	partName = Strut
 	pos = -0.07834256,1.267485,-1.417238
 	rot = 0,-4.371139E-08,0,-1
@@ -615,8 +584,8 @@ PART
 	sidx = 2
 	sqor = 1
 	attm = 1
-	sym = launchClamp1_4294823088
-	srfN = srfAttach,solidBooster1-1_4294823154
+	sym = launchClamp1_4294877446
+	srfN = srfAttach,solidBooster1-1_4294877512
 	EVENTS
 	{
 	}
@@ -702,7 +671,7 @@ PART
 }
 PART
 {
-	part = solarPanels4_4294822876
+	part = solarPanels4_4294877234
 	partName = Part
 	pos = -0.07834244,9.955547,0.3599732
 	rot = -0.07544509,0.7030705,-0.08947874,0.7014225
@@ -713,10 +682,10 @@ PART
 	sidx = -1
 	sqor = -1
 	attm = 1
-	sym = solarPanels4_4294822582
-	sym = solarPanels4_4294822778
-	sym = solarPanels4_4294822680
-	srfN = srfAttach,noseConeAdapter_4294823242
+	sym = solarPanels4_4294876940
+	sym = solarPanels4_4294877136
+	sym = solarPanels4_4294877038
+	srfN = srfAttach,noseConeAdapter_4294877600
 	EVENTS
 	{
 	}
@@ -775,7 +744,7 @@ PART
 }
 PART
 {
-	part = solarPanels4_4294822778
+	part = solarPanels4_4294877136
 	partName = Part
 	pos = 0.2762845,9.955547,0.005346246
 	rot = -0.1166188,0.9931266,-0.009923282,-0.00116532
@@ -786,10 +755,10 @@ PART
 	sidx = -1
 	sqor = -1
 	attm = 1
-	sym = solarPanels4_4294822582
-	sym = solarPanels4_4294822876
-	sym = solarPanels4_4294822680
-	srfN = srfAttach,noseConeAdapter_4294823242
+	sym = solarPanels4_4294876940
+	sym = solarPanels4_4294877234
+	sym = solarPanels4_4294877038
+	srfN = srfAttach,noseConeAdapter_4294877600
 	EVENTS
 	{
 	}
@@ -848,7 +817,7 @@ PART
 }
 PART
 {
-	part = solarPanels4_4294822680
+	part = solarPanels4_4294877038
 	partName = Part
 	pos = -0.07834248,9.955547,-0.3492806
 	rot = -0.08947874,0.7014225,0.07544509,-0.7030705
@@ -859,10 +828,10 @@ PART
 	sidx = -1
 	sqor = -1
 	attm = 1
-	sym = solarPanels4_4294822582
-	sym = solarPanels4_4294822876
-	sym = solarPanels4_4294822778
-	srfN = srfAttach,noseConeAdapter_4294823242
+	sym = solarPanels4_4294876940
+	sym = solarPanels4_4294877234
+	sym = solarPanels4_4294877136
+	srfN = srfAttach,noseConeAdapter_4294877600
 	EVENTS
 	{
 	}
@@ -921,7 +890,7 @@ PART
 }
 PART
 {
-	part = solarPanels4_4294822582
+	part = solarPanels4_4294876940
 	partName = Part
 	pos = -0.4329694,9.955547,0.005346319
 	rot = 0.009923287,0.001165276,-0.1166188,0.9931266
@@ -932,10 +901,10 @@ PART
 	sidx = -1
 	sqor = -1
 	attm = 1
-	sym = solarPanels4_4294822876
-	sym = solarPanels4_4294822778
-	sym = solarPanels4_4294822680
-	srfN = srfAttach,noseConeAdapter_4294823242
+	sym = solarPanels4_4294877234
+	sym = solarPanels4_4294877136
+	sym = solarPanels4_4294877038
+	srfN = srfAttach,noseConeAdapter_4294877600
 	EVENTS
 	{
 	}
@@ -989,6 +958,92 @@ PART
 			{
 				actionGroup = None
 			}
+		}
+	}
+}
+PART
+{
+	part = EngineerChipFlight_4294872736
+	partName = Part
+	pos = -0.6441905,9.233011,0.005519917
+	rot = 0.4437982,-0.5592517,0.4327096,0.5504937
+	attRot = 0,0,0,1
+	mir = 1,1,1
+	istg = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	attm = 1
+	srfN = srfAttach,noseConeAdapter_4294877600
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	MODULE
+	{
+		name = BuildEngineer
+		isEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+	}
+	MODULE
+	{
+		name = FlightEngineer
+		isEnabled = True
+		EVENTS
+		{
+			ShowWindow
+			{
+				active = False
+				guiActive = True
+				guiIcon = Toggle Flight Engineer
+				guiName = Toggle Flight Engineer
+				category = Toggle Flight Engineer
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+		}
+		ACTIONS
+		{
+		}
+	}
+}
+PART
+{
+	part = AtmosphereRemover_4294869478
+	partName = Part
+	pos = 0.2931759,10.31248,0.005346319
+	rot = 0.7071068,0.7071068,0,0
+	attRot = 0,0,0.7071068,0.7071068
+	mir = 1,1,1
+	istg = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	attm = 1
+	srfN = srfAttach,probeCoreOcto_4294877796
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	MODULE
+	{
+		name = AtmosphereRemover
+		isEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
 		}
 	}
 }

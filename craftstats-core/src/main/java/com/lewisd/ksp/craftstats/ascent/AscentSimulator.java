@@ -60,6 +60,23 @@ public class AscentSimulator {
         }
 
         final Stage stage = vehicle.getStagesFromBottom().get(0);
+
+        if (stage.getLOXFuelMass() == 0 && stage.getSolidFuelMass() == 0 && stage.getNumber() != 0) {
+            // eject stage since all engines have stopped
+            vehicle.ejectStage();
+            listener.stageEjected(stage);
+
+            if (!throttlePercentByStage.isEmpty()) {
+                final int key = throttlePercentByStage.firstKey();
+                if (key >= vehicle.getStagesFromBottom().get(0).getNumber()) {
+                    throttle = throttlePercentByStage.get(key);
+                    listener.throttleChanged(throttle);
+                    throttlePercentByStage.remove(key);
+                }
+            }
+            return;
+        }
+
         final double g = vehicle.getEnvironment().getGravity(vehicle.getAltitude());
 
         final double pitch = vehicle.getPitch();
@@ -67,7 +84,6 @@ public class AscentSimulator {
 
         thrustVector = new Vect3(0, 0, 0);
 
-        boolean burning = false;
         for (final Engine engine : stage.getActiveEngines()) {
             final double thrust = engine.getThrust(throttle);
             final double isp = engine.getIsp();
@@ -78,7 +94,6 @@ public class AscentSimulator {
 
             if (engine.consumeFuel(fuelBurned)) {
                 thrustVector.add(new Vect3(0, accel, 0));
-                burning = true;
             }
         }
 
@@ -102,24 +117,14 @@ public class AscentSimulator {
         stepVelocityVector.multiply(step);
         vehicle.getPosition().add(stepVelocityVector);
 
-        if (!burning) {
-            // eject stage since all engines have stopped
-            vehicle.ejectStage();
-            listener.stageEjected(stage);
-
-            if (!throttlePercentByStage.isEmpty()) {
-                final int key = throttlePercentByStage.firstKey();
-                if (key >= vehicle.getStagesFromBottom().get(0).getNumber()) {
-                    throttle = throttlePercentByStage.get(key);
-                    listener.throttleChanged(throttle);
-                    throttlePercentByStage.remove(key);
-                }
-            }
-        }
     }
 
     public void printAscentState(final PrintStream out, final boolean verbose) {
         final Vect3 orbitalVelocity = vehicle.getVelocity();
+        final Vect3 position = vehicle.getPosition();
+        final Vect3 rotationalVelocity = vehicle.getEnvironment().getRotationalVelocityVector(position);
+        final Vect3 surfaceVelocity = new Vect3(rotationalVelocity);
+        surfaceVelocity.subtract(orbitalVelocity);
         final double altitute = vehicle.getAltitude();
         final double pitch = vehicle.getPitch();
         final double mass = vehicle.getMass();
@@ -133,16 +138,26 @@ public class AscentSimulator {
         final double seconds = millis / 1000.0;
 
         // System.out.printf("%3.1f : velocity=%.1fm/s, %.1fm/s, %.1fm/s%n", met, orbitalVelocity.getX(), orbitalVelocity.getY(), orbitalVelocity.getZ());
-        out.printf("%02d:%02d:%04.1f : velocity=%.1fm/s accel=%.2fm/s/s alt=%.3fkm pitch=%.0f° mass=%.2ft%n",
+        out.printf("%02d:%02d:%04.1f : surface velocity=%.1fm/s accel=%.2fm/s/s alt=%.3fkm pitch=%.0f° mass=%.4ft%n",
                    hours, minutes, seconds,
-                   orbitalVelocity.getY(),
+                   surfaceVelocity.getLength(),
                    accel,
                    altitute / 1000,
                    pitch,
                    mass);
         if (verbose) {
-            System.out.printf("             thrust=%.1fm/s, %.1fm/s, %.1fm/s%n", thrustVector.getX(), thrustVector.getY(), thrustVector.getZ());
-            System.out.printf("             drag=%.1fm/s, %.1fm/s, %.1fm/s%n", dragVector.getX(), dragVector.getY(), dragVector.getZ());
+            System.out.printf("             thrust=%.1fm/s, %.1fm/s, %.1fm/s, magnitude=%.1fm/s%n",
+                              thrustVector.getX(), thrustVector.getY(), thrustVector.getZ(), thrustVector.getLength());
+            System.out.printf("             drag=%.1fm/s, %.1fm/s, %.1fm/s, magnitude=%.1fm/s%n",
+                              dragVector.getX(), dragVector.getY(), dragVector.getZ(), dragVector.getLength());
+            System.out.printf("             orbital velocity=%.1fm/s, %.1fm/s, %.1fm/s, magnitude=%.1fm/s%n",
+                              orbitalVelocity.getX(), orbitalVelocity.getY(), orbitalVelocity.getZ(), orbitalVelocity.getLength());
+            System.out.printf("             surface velocity=%.1fm/s, %.1fm/s, %.1fm/s, magnitude=%.1fm/s%n",
+                              surfaceVelocity.getX(), surfaceVelocity.getY(), surfaceVelocity.getZ(), surfaceVelocity.getLength());
+            System.out.printf("             rotational velocity=%.1fm/s, %.1fm/s, %.1fm/s, magnitude=%.1fm/s%n",
+                              rotationalVelocity.getX(), rotationalVelocity.getY(), rotationalVelocity.getZ(), rotationalVelocity.getLength());
+            System.out.printf("             position=%.1fm, %.1fm, %.1fm%n", position.getX(), position.getY(), position.getZ());
+            System.out.printf("             fuel=%.5f%n", vehicle.getCurrentStage().getSolidFuelMass());
         }
     }
 

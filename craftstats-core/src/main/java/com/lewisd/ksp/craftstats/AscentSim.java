@@ -35,7 +35,7 @@ public class AscentSim extends AbstractVehicleEnvironmentMain {
         super(args);
 
         verbose = cmdLine.hasOption("verbose");
-        step = Double.parseDouble(cmdLine.getOptionValue("step", "0.1"));
+        step = Double.parseDouble(cmdLine.getOptionValue("step", "1"));
 
         if (cmdLine.hasOption("throttle")) {
             for (final String throttleCmd : cmdLine.getOptionValues("throttle")) {
@@ -91,11 +91,13 @@ public class AscentSim extends AbstractVehicleEnvironmentMain {
         simulator.printAscentState(System.out, verbose);
 
         final double requestedAltitude = 1000000;
-        final int printInterval = 10;
+        final int printInterval = 1;
         final double maxMet = 500;
 
+        double extraTime = 5;
+
         int printCounter = 0;
-        while (vehicle.getAltitude() >= 0 && vehicle.getAltitude() < requestedAltitude && vehicle.getStagesFromBottom().get(0).getNumber() > 0) {
+        while (true) {
 
             simulator.runStep();
 
@@ -107,6 +109,29 @@ public class AscentSim extends AbstractVehicleEnvironmentMain {
             if (simulator.getMet() >= maxMet) {
                 break;
             }
+
+            if (vehicle.getAltitude() < 0) {
+                System.out.println("You will not go to space today.");
+                if (extraTime-- <= 0) {
+                    break;
+                }
+            }
+            if (vehicle.getAltitude() >= requestedAltitude) {
+                System.out.println("Requested altitude reached.");
+                if (extraTime-- <= 0) {
+                    break;
+                }
+            }
+            if (vehicle.getCurrentStage().getNumber() == 0) {
+                System.out.println("Final stage.");
+                if (extraTime-- <= 0) {
+                    break;
+                }
+            }
+        }
+
+        if (printCounter > 0) {
+            simulator.printAscentState(System.out, verbose);
         }
 
     }

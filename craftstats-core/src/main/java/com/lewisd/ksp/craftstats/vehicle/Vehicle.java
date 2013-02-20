@@ -132,6 +132,10 @@ public class Vehicle {
         return parts;
     }
 
+    public Stage getCurrentStage() {
+        return getStagesFromBottom().get(0);
+    }
+
     public List<Stage> getStagesFromTop() {
         return new ArrayList<>(stages.values());
     }

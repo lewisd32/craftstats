@@ -1,8 +1,11 @@
 package com.lewisd.ksp.craftstats.gamedata;
 
+import static com.lewisd.ksp.craftstats.util.Vect3TestUtil.assertVectEquals;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
+
+import com.lewisd.ksp.craftstats.util.Vect3;
 
 public class EnvironmentTest {
 
@@ -99,6 +102,33 @@ public class EnvironmentTest {
     @Test
     public void testKerbinOrbitalVelocity200k() {
         assertEquals(2101.1, Environment.KERBIN.getOrbitalVelocity(200000), 0.1);
+    }
+
+    @Test
+    public void testRotationalVelocity() {
+        final double rotationalVelocity = Environment.KERBIN.getRotationalVelocity(2868.75072505 * 1000);
+        assertEquals(1009.001773, rotationalVelocity, 0.000001);
+    }
+
+    @Test
+    public void testRotationalVelocityVectorSurfaceNorth() {
+        final Vect3 rotationalVelocityVector = Environment.KERBIN.getRotationalVelocityVector(new Vect3(0, -600000, 0));
+        final Vect3 expected = new Vect3(174.53, 0.0, 0.0);
+        assertVectEquals(expected, rotationalVelocityVector);
+    }
+
+    @Test
+    public void testRotationalVelocityVectorSurfaceEast() {
+        final Vect3 rotationalVelocityVector = Environment.KERBIN.getRotationalVelocityVector(new Vect3(600000, 0, 0));
+        final Vect3 expected = new Vect3(0.0, 174.53, 0.0);
+        assertVectEquals(expected, rotationalVelocityVector);
+    }
+
+    @Test
+    public void testRotationalVelocityVectorGeosyncNorth() {
+        final Vect3 rotationalVelocityVector = Environment.KERBIN.getRotationalVelocityVector(new Vect3(0, -600000 - 2868.75072505 * 1000, 0));
+        final Vect3 expected = new Vect3(1009.001773, 0.0, 0.0);
+        assertVectEquals(expected, rotationalVelocityVector);
     }
 
 }
