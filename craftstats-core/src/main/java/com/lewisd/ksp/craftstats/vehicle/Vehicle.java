@@ -16,6 +16,8 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import com.lewisd.ksp.craftstats.cfg.CfgGroup;
+import com.lewisd.ksp.craftstats.cfg.CfgKeyValueLine;
+import com.lewisd.ksp.craftstats.cfg.CfgLine;
 import com.lewisd.ksp.craftstats.gamedata.Environment;
 import com.lewisd.ksp.craftstats.gamedata.PartTitleComparator;
 import com.lewisd.ksp.craftstats.gamedata.Resources;
@@ -35,7 +37,6 @@ public class Vehicle {
     private Vect3 velocity;
     private double pitch;
 
-
     public Vehicle(final CfgGroup root, final List<VehiclePart> vehicleParts, final Resources resources) {
         vehicleGroup = root;
 
@@ -53,6 +54,14 @@ public class Vehicle {
         findLaunchClamps();
     }
 
+    public void addParts(final Collection<VehiclePart> vehicleParts) {
+        for (final VehiclePart vehiclePart : vehicleParts) {
+            final String id = vehiclePart.getId();
+            partByIdMap.put(id, vehiclePart);
+            vehicleGroup.addSubgroup(vehiclePart.getCfgGroup());
+        }
+    }
+
     public String getName() {
         return vehicleGroup.getProperties().get("ship");
     }
@@ -65,9 +74,43 @@ public class Vehicle {
         return vehicleGroup.getProperties().get("type");
     }
 
+    public void setName(final String vehicleName) {
+        vehicleGroup.getProperties().getLine("ship").setValue(vehicleName);
+    }
+
+    public long getLowestUid() {
+        return getPartsByUidOrder().get(0).getUid();
+    }
+
+    public long getHighestUid() {
+        return getPartsByReverseUidOrder().get(0).getUid();
+    }
+
     public double getHeight() {
         // FIXME: This should be calculated from the parts. May need to take launch pad into account too.
         return 87;
+    }
+
+    public void reposition(final Vect3 offset) {
+        for (final VehiclePart vehiclePart : partByIdMap.values()) {
+            final Vect3 partPosition = vehiclePart.getPosition();
+            partPosition.add(offset);
+            vehiclePart.setPosition(partPosition);
+        }
+    }
+
+    public VehiclePart getLowestDecoupler() {
+        final List<VehiclePart> decouplers = findDecouplers();
+        return VehicleParts.getLowest(decouplers);
+    }
+
+    public VehiclePart getHighestDecoupler() {
+        final List<VehiclePart> decouplers = findDecouplers();
+        return VehicleParts.getHighest(decouplers);
+    }
+
+    public CfgGroup getCfgGroup() {
+        return vehicleGroup;
     }
 
     public VehiclePart getRootPart() {
@@ -181,6 +224,75 @@ public class Vehicle {
         }
     }
 
+    public VehiclePart getPart(final String id) {
+        return partByIdMap.get(id);
+    }
+
+    public void renumberParts(final long highestUid) {
+        final List<VehiclePart> parts = getPartsByReverseUidOrder();
+        // parts will be sorted from highest UID first, to lowest UID last
+
+        final Map<String, String> newIdByOldIdMap = new HashMap<>();
+
+        long uid = highestUid;
+        for (final VehiclePart vehiclePart : parts) {
+            final String oldId = vehiclePart.getId();
+            vehiclePart.setUidWithoutRemap(uid);
+            newIdByOldIdMap.put(oldId, vehiclePart.getId());
+            uid -= 24;
+        }
+
+        remap(vehicleGroup, newIdByOldIdMap);
+
+        reorderCfgGroups();
+    }
+
+    private List<VehiclePart> getPartsByUidOrder() {
+        final List<VehiclePart> parts = new ArrayList<>(partByIdMap.values());
+        Collections.sort(parts, new VehicleUidComparator());
+        return parts;
+    }
+
+    private List<VehiclePart> getPartsByReverseUidOrder() {
+        final List<VehiclePart> parts = new ArrayList<>(partByIdMap.values());
+        Collections.sort(parts, Collections.reverseOrder(new VehicleUidComparator()));
+        return parts;
+    }
+
+    private void reorderCfgGroups() {
+        final List<VehiclePart> parts = getPartsByReverseUidOrder();
+        for (final VehiclePart vehiclePart : parts) {
+            vehicleGroup.removeSubgroup(vehiclePart.getCfgGroup());
+            vehicleGroup.addSubgroup(vehiclePart.getCfgGroup());
+        }
+    }
+
+    public void remapId(final String oldId, final String newId) {
+        final Map<String, String> newIdByOldIdMap = new HashMap<>();
+        newIdByOldIdMap.put(oldId, newId);
+        remap(vehicleGroup, newIdByOldIdMap);
+        reorderCfgGroups();
+    }
+
+    private static void remap(final CfgGroup cfgGroup, final Map<String, String> newIdByOldIdMap) {
+        for (final CfgLine line : cfgGroup.getProperties().getLines()) {
+            if (line instanceof CfgKeyValueLine) {
+                final CfgKeyValueLine keyValueLine = (CfgKeyValueLine) line;
+                String value = keyValueLine.getValue();
+                for (final Map.Entry<String, String> entry : newIdByOldIdMap.entrySet()) {
+                    final String oldId = entry.getKey();
+                    final String newId = entry.getValue();
+                    value = value.replaceAll(oldId, newId);
+                }
+                keyValueLine.setValue(value);
+            }
+        }
+
+        for (final CfgGroup subGroup : cfgGroup.getSubgroups()) {
+            remap(subGroup, newIdByOldIdMap);
+        }
+    }
+
     private void buildPartTree() {
         final Set<VehiclePart> connected = new HashSet<>();
         final Deque<VehiclePart> leafs = new ArrayDeque<VehiclePart>();
@@ -216,7 +328,7 @@ public class Vehicle {
         return stageNumberSet;
     }
 
-    private Map<Integer, List<VehiclePart>> findDecouplers() {
+    private Map<Integer, List<VehiclePart>> findDecouplersByStage() {
         final Map<Integer, List<VehiclePart>> stageDecouplers = new HashMap<>();
         for (final VehiclePart vehiclePart : partByIdMap.values()) {
             final int stageNumber = vehiclePart.getQueuedStage();
@@ -235,12 +347,11 @@ public class Vehicle {
     }
 
     private void buildStages(final List<VehiclePart> vehicleParts, final SortedSet<Integer> stageNumberSet, final Resources resources) {
-        final Map<Integer, List<VehiclePart>> stageDecouplers = findDecouplers();
+        final Map<Integer, List<VehiclePart>> stageDecouplers = findDecouplersByStage();
 
         final List<VehiclePart> stagedParts = new ArrayList<>(vehicleParts);
         final List<Integer> reverseStageNumbers = new ArrayList<>(stageNumberSet);
         Collections.reverse(reverseStageNumbers);
-
 
         for (final int stageNumber : reverseStageNumbers) {
             final List<VehiclePart> decouplers = stageDecouplers.get(stageNumber);
@@ -306,6 +417,23 @@ public class Vehicle {
                 stage.setLaunchClampsReleased(false);
             }
         }
+    }
+
+    private List<VehiclePart> findDecouplers() {
+        final List<VehiclePart> decouplers = new ArrayList<>();
+        for (final VehiclePart vehiclePart : partByIdMap.values()) {
+            if (vehiclePart.getPart().isDecoupler()) {
+                decouplers.add(vehiclePart);
+            }
+        }
+        return decouplers;
+    }
+
+    public void removeParts(final Set<VehiclePart> vehicleParts) {
+        for (final VehiclePart vehiclePart : vehicleParts) {
+            vehicleGroup.removeSubgroup(vehiclePart.getCfgGroup());
+        }
+        // FIXME: remove any missing connections
     }
 
 }

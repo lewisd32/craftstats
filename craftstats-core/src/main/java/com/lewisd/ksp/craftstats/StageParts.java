@@ -21,7 +21,7 @@ public class StageParts extends AbstractVehicleMain {
     private final boolean verbose;
     private final boolean showAllParts;
 
-    public StageParts(final KerbalContext kerbalContext, final boolean verbose, final boolean showAllParts, final boolean showStages) {
+    public StageParts(final KerbalContext kerbalContext, final boolean verbose, final boolean showAllParts) {
         super(kerbalContext);
         this.verbose = verbose;
         this.showAllParts = showAllParts;
@@ -52,7 +52,7 @@ public class StageParts extends AbstractVehicleMain {
 
     private void printStages(final Vehicle vehicle, final PrintStream out) {
         for (final Stage stage : vehicle.getStagesFromTop()) {
-                printStageStats(out, stage);
+            printStageStats(out, stage);
         }
     }
 

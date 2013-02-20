@@ -1,5 +1,6 @@
 package com.lewisd.ksp.craftstats.vehicle;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -16,8 +17,6 @@ import com.lewisd.ksp.craftstats.gamedata.Resource;
 import com.lewisd.ksp.craftstats.gamedata.Resources;
 import com.lewisd.ksp.craftstats.util.Vect3;
 
-
-
 public class VehiclePart {
 
     private final Resources resources;
@@ -28,10 +27,8 @@ public class VehiclePart {
 
     private VehiclePart parent;
     private Vehicle vehicle;
-    private String id;
 
-    public VehiclePart(final String id, final Part part, final CfgGroup partGroup, final Resources resources) {
-        this.id = id;
+    public VehiclePart(final Part part, final CfgGroup partGroup, final Resources resources) {
         this.part = part;
         this.partGroup = partGroup;
         this.resources = resources;
@@ -50,15 +47,33 @@ public class VehiclePart {
     }
 
     public String getId() {
-        return id;
+        return partGroup.getProperties().get("part");
+    }
+
+    public void setId(final String id) {
+        partGroup.getProperties().getLine("part").setValue(id);
     }
 
     public long getUid() {
+        final String id = getId();
         return Long.parseLong(id.substring(id.indexOf('_') + 1));
     }
 
     public void setUid(final long uid) {
-        id = id.substring(0, id.indexOf('_') + 1) + uid;
+        final String oldId = getId();
+        setUidWithoutRemap(uid);
+        final String newId = getId();
+        vehicle.remapId(oldId, newId);
+    }
+
+    public void setUidWithoutRemap(final long uid) {
+        final String id = getId();
+        final String newId = id.substring(0, id.indexOf('_') + 1) + uid;
+        setId(newId);
+    }
+
+    public CfgGroup getCfgGroup() {
+        return partGroup;
     }
 
     public Part getPart() {
@@ -86,7 +101,7 @@ public class VehiclePart {
     }
 
     public void setPosition(final Vect3 position) {
-        final String positionString = String.format("%.5f, %.5f, %.5f", position.getX(), position.getY(), position.getZ());
+        final String positionString = String.format("%.7f, %.7f, %.7f", position.getX(), position.getY(), position.getZ());
         partGroup.getProperties().getLine("pos").setValue(positionString);
     }
 
@@ -207,9 +222,67 @@ public class VehiclePart {
         return descendants;
     }
 
+    public Vect3 getLowestStackNode() {
+        final List<Vect3> nodes = getStackNodes();
+        Collections.sort(nodes, new Vect3YComparator());
+        return nodes.get(0);
+    }
+
+    public Vect3 getHighestStackNode() {
+        final List<Vect3> nodes = getStackNodes();
+        Collections.sort(nodes, Collections.reverseOrder(new Vect3YComparator()));
+        return nodes.get(0);
+    }
+
+    public List<Vect3> getStackNodes() {
+        final List<Vect3> nodes = new ArrayList<>();
+        final Vect3 nodeStackBottom = getNode("node_stack_bottom");
+        if (nodeStackBottom != null) {
+            nodes.add(nodeStackBottom);
+        }
+        final Vect3 nodeStackTop = getNode("node_stack_top");
+        if (nodeStackTop != null) {
+            nodes.add(nodeStackTop);
+        }
+        return nodes;
+    }
+
+    public Vect3 getNode(final String key) {
+        final String nodeStackBottom = getPart().getProperties().getOptional(key);
+        if (nodeStackBottom != null) {
+            final Vect3 node = Vect3.parse(nodeStackBottom);
+            node.add(getPosition());
+            return node;
+        }
+        return null;
+    }
+
     @Override
     public String toString() {
-        return part.getTitle() + "(" + id + ")";
+        return part.getTitle() + " (" + getId() + ")";
+    }
+
+    public VehiclePart getPartBelow() {
+        final List<VehiclePart> relations = new ArrayList<>(getChildren());
+        if (parent != null) {
+            relations.add(parent);
+        }
+        return VehicleParts.getLowest(relations);
+    }
+
+    public VehiclePart getPartAbove() {
+        final List<VehiclePart> relations = new ArrayList<>(getChildren());
+        if (parent != null) {
+            relations.add(parent);
+        }
+        return VehicleParts.getHighest(relations);
+    }
+
+    public List<VehiclePart> getAncestorsWithDescentants() {
+        final List<VehiclePart> relations = new ArrayList<>(parent.getDescendants());
+        relations.remove(getDescendants());
+        relations.remove(this);
+        return relations;
     }
 
 }

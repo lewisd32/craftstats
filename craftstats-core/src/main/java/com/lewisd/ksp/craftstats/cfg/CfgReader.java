@@ -32,11 +32,12 @@ public class CfgReader {
             final String trimmedLine = line.trim();
             if (trimmedLine.equals("}")) {
                 // add line to group
+                group.addFooterLine(new CfgRawLine(line));
                 return group;
             }
 
             if (trimmedLine.equals("{")) {
-                // add line to group
+                group.addHeaderLine(new CfgRawLine(line));
                 continue;
             }
 

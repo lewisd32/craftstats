@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import com.lewisd.ksp.craftstats.cfg.CfgReader;
+import com.lewisd.ksp.craftstats.cfg.CfgWriter;
 import com.lewisd.ksp.craftstats.gamedata.PartModules;
 import com.lewisd.ksp.craftstats.gamedata.Parts;
 import com.lewisd.ksp.craftstats.gamedata.Resources;
@@ -12,6 +13,7 @@ import com.lewisd.ksp.craftstats.vehicle.loader.VehicleLoader;
 public class KerbalContext {
 
     private final CfgReader cfgReader = new CfgReader();
+    private final CfgWriter cfgWriter = new CfgWriter();
     private final PartModuleLoader partModuleLoader = new PartModuleLoader(cfgReader);
     private final PartModules partModules = new PartModules(partModuleLoader);
     private final ResourcesLoader resourcesLoader = new ResourcesLoader(cfgReader);
@@ -66,9 +68,8 @@ public class KerbalContext {
 
     public VehicleLoader getVehicleLoader() throws IOException {
         loadParts();
-        return new VehicleLoader(cfgReader, parts, resources);
+        return new VehicleLoader(cfgReader, cfgWriter, parts, resources);
     }
-
 
     public static String getKspHome() {
         final String propKspHome = System.getProperty("ksp_home");

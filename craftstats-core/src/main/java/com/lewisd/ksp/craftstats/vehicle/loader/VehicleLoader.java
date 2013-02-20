@@ -10,6 +10,7 @@ import java.util.List;
 import com.lewisd.ksp.craftstats.cfg.CfgGroup;
 import com.lewisd.ksp.craftstats.cfg.CfgProperties;
 import com.lewisd.ksp.craftstats.cfg.CfgReader;
+import com.lewisd.ksp.craftstats.cfg.CfgWriter;
 import com.lewisd.ksp.craftstats.gamedata.Part;
 import com.lewisd.ksp.craftstats.gamedata.Parts;
 import com.lewisd.ksp.craftstats.gamedata.Resources;
@@ -19,11 +20,13 @@ import com.lewisd.ksp.craftstats.vehicle.VehiclePart;
 public class VehicleLoader {
 
     private final CfgReader cfgReader;
+    private final CfgWriter cfgWriter;
     private final Parts parts;
     private final Resources resources;
 
-    public VehicleLoader(final CfgReader cfgReader, final Parts parts, final Resources resources) {
+    public VehicleLoader(final CfgReader cfgReader, final CfgWriter cfgWriter, final Parts parts, final Resources resources) {
         this.cfgReader = cfgReader;
+        this.cfgWriter = cfgWriter;
         this.parts = parts;
         this.resources = resources;
     }
@@ -46,7 +49,7 @@ public class VehicleLoader {
             final String partName = id.substring(0, id.indexOf('_'));
             final Part part = parts.getPart(partName);
 
-            final VehiclePart vehiclePart = new VehiclePart(id, part, partGroup, resources);
+            final VehiclePart vehiclePart = new VehiclePart(part, partGroup, resources);
             vehicleParts.add(vehiclePart);
         }
 
@@ -57,6 +60,11 @@ public class VehicleLoader {
         }
 
         return vehicle;
+    }
+
+    public void saveVehicle(final Vehicle vehicle, final File file) throws IOException {
+        final CfgGroup cfgGroup = vehicle.getCfgGroup();
+        cfgWriter.writeCfg(cfgGroup, file);
     }
 
 }

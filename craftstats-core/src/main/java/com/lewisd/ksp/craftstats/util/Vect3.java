@@ -6,7 +6,6 @@ public class Vect3 {
     private double y;
     private double z;
 
-
     public Vect3(final Vect3 vect) {
         this.x = vect.x;
         this.y = vect.y;
@@ -148,5 +147,4 @@ public class Vect3 {
         }
         return true;
     }
-
 }

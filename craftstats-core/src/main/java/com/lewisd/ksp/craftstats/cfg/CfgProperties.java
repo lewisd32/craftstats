@@ -24,12 +24,12 @@ public class CfgProperties {
 
     public void addLine(final CfgLine newLine) {
         if (newLine instanceof CfgKeyValueLine) {
-            final String key = ((CfgKeyValueLine)newLine).getKey();
+            final String key = ((CfgKeyValueLine) newLine).getKey();
             for (int i = lines.size() - 1; i >= 0; --i) {
                 final CfgLine line = lines.get(i);
                 if (line instanceof CfgKeyValueLine) {
-                    if (key.equals(((CfgKeyValueLine)line).getKey())) {
-                        lines.add(i+1, newLine);
+                    if (key.equals(((CfgKeyValueLine) line).getKey())) {
+                        lines.add(i + 1, newLine);
                         return;
                     }
                 }
@@ -37,7 +37,6 @@ public class CfgProperties {
         }
         lines.add(newLine);
     }
-
 
     public List<String> getList(final String key) {
         final List<String> values = getOptionalList(key);
@@ -159,6 +158,10 @@ public class CfgProperties {
         }
 
         return matchedLines;
+    }
+
+    public List<CfgLine> getLines() {
+        return Collections.unmodifiableList(lines);
     }
 
 }
