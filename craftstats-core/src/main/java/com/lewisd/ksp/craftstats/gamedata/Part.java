@@ -60,6 +60,10 @@ public class Part {
         return getProperties().get("title");
     }
 
+    public double getMaximumDrag() {
+        return getProperties().getDouble("maximum_drag");
+    }
+
     public double getDryMass() {
         return getMaxMass() - getMaxSolidFuelMass() - getMaxLOXFuelMass();
     }

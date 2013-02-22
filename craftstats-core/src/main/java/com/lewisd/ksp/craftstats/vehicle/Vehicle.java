@@ -213,6 +213,7 @@ public class Vehicle {
 
     public Vect3 getDragAcceleration() {
         // FIXME: hard-coded for vertical flight only. Fix when making pitch work.
+        /*
         final double v = getVelocity().getLength();
         final double force = 0.5 * getMass() * DRAG_MULTIPLIER * getCoefficientOfDrag() * environment.getAtmosphere().getDensity(getAltitude()) * v * v;
         final double accel = force / getMass();
@@ -222,6 +223,24 @@ public class Vehicle {
         } else {
             return new Vect3(0, accel, 0);
         }
+        */
+        
+        final Vect3 atmosphereVelocity = getEnvironment().getRotationalVelocityVector(getPosition());
+        final Vect3 velocity = getVelocity();
+        
+        final Vect3 relativeAtmosphericVelocity = new Vect3(velocity);
+        relativeAtmosphericVelocity.subtract(atmosphereVelocity);
+        
+        final double v = relativeAtmosphericVelocity.getLength();
+        double maximumDrag = 0;
+        for (VehiclePart vehiclePart : getCurrentStage().getAllParts()) {
+            maximumDrag += vehiclePart.getPart().getMaximumDrag() * vehiclePart.getMass();
+        }
+        double density = getEnvironment().getAtmosphere().getDensity(getAltitude());
+        final double dragAccel = (0.008 * 0.5 * maximumDrag * density * v*v) / getMass();
+        
+        final Vect3 dragVector = relativeAtmosphericVelocity.unitVector(-dragAccel);
+        return dragVector;
     }
 
     public VehiclePart getPart(final String id) {

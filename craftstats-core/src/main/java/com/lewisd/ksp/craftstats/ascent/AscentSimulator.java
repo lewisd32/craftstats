@@ -157,7 +157,8 @@ public class AscentSimulator {
             System.out.printf("             rotational velocity=%.1fm/s, %.1fm/s, %.1fm/s, magnitude=%.1fm/s%n",
                               rotationalVelocity.getX(), rotationalVelocity.getY(), rotationalVelocity.getZ(), rotationalVelocity.getLength());
             System.out.printf("             position=%.1fm, %.1fm, %.1fm%n", position.getX(), position.getY(), position.getZ());
-            System.out.printf("             fuel=%.5f%n", vehicle.getCurrentStage().getSolidFuelMass());
+            System.out.printf("             fuel=%.5ft LOX, %.5ft Solid%n",
+                              vehicle.getCurrentStage().getLOXFuelMass(), vehicle.getCurrentStage().getSolidFuelMass());
         }
     }
 

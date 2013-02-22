@@ -3,6 +3,8 @@ package com.lewisd.ksp.craftstats.gamedata;
 import com.lewisd.ksp.craftstats.util.Vect3;
 
 public class Environment {
+    
+    // TODO: Should I merge Atmosphere into Environment?
 
     public static final Environment KERBIN = new Environment("Kerbin", 600000, 3.5316E+12, 3431.03, 174.53, Atmosphere.KERBIN);
     public static final Environment KERBIN_VACUUM = new Environment("Kerbin in vacuum", 600000, 3.5316E+12, 3431.03, 174.53, Atmosphere.NONE);

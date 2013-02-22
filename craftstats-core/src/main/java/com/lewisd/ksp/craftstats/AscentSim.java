@@ -92,7 +92,7 @@ public class AscentSim extends AbstractVehicleEnvironmentMain {
 
         final double requestedAltitude = 1000000;
         final int printInterval = 1;
-        final double maxMet = 500;
+        final double maxMet = 1000;
 
         double extraTime = 5;
 
