@@ -3,7 +3,7 @@ package com.lewisd.ksp.craftstats.telemetry;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class DumpTelemetry implements TelemetryListener {
@@ -14,17 +14,30 @@ public class DumpTelemetry implements TelemetryListener {
     private static final Map<String, String> PARAMETERS = buildParameters();
 
     private static Map<String, String> buildHeaderParameters() {
-        final Map<String, String> parameters = new HashMap<>();
+        final Map<String, String> parameters = new LinkedHashMap<>();
         parameters.put("met", "vessel.missionTime");
         parameters.put("name", "vessel.vesselName");
         return parameters;
     }
 
     private static Map<String, String> buildParameters() {
-        final Map<String, String> parameters = new HashMap<>();
+        final Map<String, String> parameters = new LinkedHashMap<>();
         parameters.put("met", "vessel.missionTime");
         parameters.put("alt", "vessel.altitude");
         parameters.put("vspeed", "vessel.verticalSpeed");
+        parameters.put("accel", "vessel.acceleration");
+        parameters.put("accel_m", "vessel.acceleration.magnitude");
+        parameters.put("ov_m", "vessel.obt_velocity.magnitude");
+        parameters.put("stg", "vessel.currentStage");
+        parameters.put("srfRelRot", "vessel.srfRelRotation");
+        parameters.put("ov", "vessel.obt_velocity");
+        parameters.put("rbv", "vessel.rb_velocity");
+        parameters.put("angv", "vessel.angularVelocity");
+        parameters.put("perturbation", "vessel.perturbation");
+        parameters.put("lat", "vessel.latitude");
+        parameters.put("lon", "vessel.longitude");
+        parameters.put("CoM", "vessel.CoM");
+        parameters.put("localCoM", "vessel.localCoM");
         return parameters;
     }
 

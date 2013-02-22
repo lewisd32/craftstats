@@ -7,7 +7,7 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -76,7 +76,7 @@ public class TelemetryReader {
         final String line = reader.readLine();
         input.close();
 
-        final Map<String, String> results = new HashMap<>();
+        final Map<String, String> results = new LinkedHashMap<>();
         final String parts[] = line.split(";");
         for (final String part : parts) {
             final String key = part.split("=", 2)[0].trim();
