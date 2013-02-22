@@ -21,6 +21,7 @@
   <modules>
     <module>craftstats-core</module>
     <module>craftstats-assembly</module>
+    <module>craftstats-util</module>
   </modules>
 
   <scm>
