@@ -27,6 +27,7 @@ public abstract class AbstractMain {
 
         options = new Options();
         options.addOption("k", "ksp", true, "Path to KSP. Required, unless KSP_HOME environment variable is set.");
+        options.addOption("h", "help", false, "Print this usage information.");
 
         addOptions(options);
 
@@ -36,9 +37,16 @@ public abstract class AbstractMain {
             cmdLine = parser.parse(options, args);
             checkRequired(cmdLine);
         } catch (final ParseException e) {
-            e.printStackTrace(System.err);
+            System.err.println(e.getMessage());
+            usage();
             System.exit(2);
         }
+
+        if (cmdLine.hasOption("help")) {
+            usage();
+            System.exit(0);
+        }
+
         this.cmdLine = cmdLine;
 
         try {
@@ -61,13 +69,17 @@ public abstract class AbstractMain {
     protected void require(final CommandLine cmdLine, final String param) {
         if (!cmdLine.hasOption(param)) {
             System.err.println("Missing required parameter: " + param);
-            System.err.println();
-            final HelpFormatter formatter = new HelpFormatter();
-            final PrintWriter writer = new PrintWriter(System.err);
-            formatter.printHelp(writer, 74, this.getClass().getSimpleName().toLowerCase(), null, options, 1, 3, null, true);
-            writer.flush();
+            usage();
             System.exit(1);
         }
+    }
+
+    protected void usage() {
+        System.err.println();
+        final HelpFormatter formatter = new HelpFormatter();
+        final PrintWriter writer = new PrintWriter(System.err);
+        formatter.printHelp(writer, 74, this.getClass().getSimpleName().toLowerCase(), null, options, 1, 3, null, true);
+        writer.flush();
     }
 
     protected abstract void checkRequired(CommandLine cmdLine);
