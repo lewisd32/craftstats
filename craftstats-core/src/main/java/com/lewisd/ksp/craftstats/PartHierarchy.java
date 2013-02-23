@@ -8,8 +8,8 @@ import java.util.List;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
-import org.apache.commons.lang.StringUtils;
 
+import com.google.common.base.Joiner;
 import com.lewisd.ksp.craftstats.gamedata.Part;
 import com.lewisd.ksp.craftstats.gamedata.loader.KerbalContext;
 import com.lewisd.ksp.craftstats.util.AbstractVehicleMain;
@@ -75,7 +75,7 @@ public class PartHierarchy extends AbstractVehicleMain {
                     texts.add(("sqor=" + parent.getQueuedStage()));
                 }
             }
-            out.print(" (" + StringUtils.join(texts, ", ") + ")");
+            out.print(" (" + Joiner.on(", ").join(texts) + ")");
         }
         out.println();
         final List<VehiclePart> children = new ArrayList<>();
