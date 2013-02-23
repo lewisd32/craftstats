@@ -113,21 +113,21 @@ public class EnvironmentTest {
     @Test
     public void testRotationalVelocityVectorSurfaceNorth() {
         final Vect3 rotationalVelocityVector = Environment.KERBIN.getRotationalVelocityVector(new Vect3(0, -600000, 0));
-        final Vect3 expected = new Vect3(174.53, 0.0, 0.0);
+        final Vect3 expected = new Vect3(-174.53, 0.0, 0.0);
         assertVectEquals(expected, rotationalVelocityVector);
     }
 
     @Test
     public void testRotationalVelocityVectorSurfaceEast() {
         final Vect3 rotationalVelocityVector = Environment.KERBIN.getRotationalVelocityVector(new Vect3(600000, 0, 0));
-        final Vect3 expected = new Vect3(0.0, 174.53, 0.0);
+        final Vect3 expected = new Vect3(0.0, -174.53, 0.0);
         assertVectEquals(expected, rotationalVelocityVector);
     }
 
     @Test
     public void testRotationalVelocityVectorGeosyncNorth() {
         final Vect3 rotationalVelocityVector = Environment.KERBIN.getRotationalVelocityVector(new Vect3(0, -600000 - 2868.75072505 * 1000, 0));
-        final Vect3 expected = new Vect3(1009.001773, 0.0, 0.0);
+        final Vect3 expected = new Vect3(-1009.001773, 0.0, 0.0);
         assertVectEquals(expected, rotationalVelocityVector);
     }
 
