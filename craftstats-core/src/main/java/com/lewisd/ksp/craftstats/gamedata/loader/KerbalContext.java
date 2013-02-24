@@ -66,6 +66,11 @@ public class KerbalContext {
         return parts;
     }
 
+    public Resources getResources() throws IOException {
+        loadResources();
+        return resources;
+    }
+
     public VehicleLoader getVehicleLoader() throws IOException {
         loadParts();
         return new VehicleLoader(cfgReader, cfgWriter, parts, resources);

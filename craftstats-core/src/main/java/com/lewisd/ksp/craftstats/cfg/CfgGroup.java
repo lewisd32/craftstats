@@ -62,6 +62,10 @@ public class CfgGroup {
         return properties.unmodifiable();
     }
 
+    public CfgProperties getModifiableProperties() {
+        return properties;
+    }
+
     public Set<String> getSubgroupTypes() {
         final Set<String> types = new HashSet<>();
         for (final CfgGroup group : subgroups) {

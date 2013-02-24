@@ -11,9 +11,11 @@ public class VehicleParts {
         Vect3 lowestNode = null;
         for (final VehiclePart vehiclePart : vehicleParts) {
             final Vect3 node = vehiclePart.getLowestStackNode();
-            if (lowestNode == null || node.getY() < lowestNode.getY()) {
-                lowestPart = vehiclePart;
-                lowestNode = node;
+            if (node != null) {
+                if (lowestNode == null || node.getY() < lowestNode.getY()) {
+                    lowestPart = vehiclePart;
+                    lowestNode = node;
+                }
             }
         }
         return lowestPart;
@@ -24,9 +26,11 @@ public class VehicleParts {
         Vect3 highestNode = null;
         for (final VehiclePart vehiclePart : vehicleParts) {
             final Vect3 node = vehiclePart.getLowestStackNode();
-            if (highestNode == null || node.getY() > highestNode.getY()) {
-                highestPart = vehiclePart;
-                highestNode = node;
+            if (node != null) {
+                if (highestNode == null || node.getY() > highestNode.getY()) {
+                    highestPart = vehiclePart;
+                    highestNode = node;
+                }
             }
         }
         return highestPart;

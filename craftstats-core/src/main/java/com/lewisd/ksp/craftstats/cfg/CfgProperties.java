@@ -164,4 +164,8 @@ public class CfgProperties {
         return Collections.unmodifiableList(lines);
     }
 
+    public void removeLine(final CfgLine line) {
+        lines.remove(line);
+    }
+
 }

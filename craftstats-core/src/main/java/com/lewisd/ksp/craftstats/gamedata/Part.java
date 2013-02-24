@@ -44,6 +44,22 @@ public class Part {
         return properties.get("name").replace('_', '.');
     }
 
+    public double getNodeScale() {
+        if (properties.getOptional("rescaleFactor") != null) {
+            return properties.getDouble("rescaleFactor");
+        } else {
+            return getScale() * getScaleFactor();
+        }
+    }
+
+    public double getScale() {
+        return properties.getDouble("scale");
+    }
+
+    public double getScaleFactor() {
+        return properties.getDouble("scaleFactor");
+    }
+
     public CfgProperties getProperties() {
         return properties.unmodifiable();
     }

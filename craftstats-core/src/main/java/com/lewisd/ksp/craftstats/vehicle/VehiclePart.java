@@ -11,6 +11,8 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import com.lewisd.ksp.craftstats.cfg.CfgGroup;
+import com.lewisd.ksp.craftstats.cfg.CfgKeyValueLine;
+import com.lewisd.ksp.craftstats.cfg.CfgProperties;
 import com.lewisd.ksp.craftstats.gamedata.Part;
 import com.lewisd.ksp.craftstats.gamedata.PartTitleComparator;
 import com.lewisd.ksp.craftstats.gamedata.Resource;
@@ -224,12 +226,18 @@ public class VehiclePart {
 
     public Vect3 getLowestStackNode() {
         final List<Vect3> nodes = getStackNodes();
+        if (nodes.isEmpty()) {
+            return null;
+        }
         Collections.sort(nodes, new Vect3YComparator());
         return nodes.get(0);
     }
 
     public Vect3 getHighestStackNode() {
         final List<Vect3> nodes = getStackNodes();
+        if (nodes.isEmpty()) {
+            return null;
+        }
         Collections.sort(nodes, Collections.reverseOrder(new Vect3YComparator()));
         return nodes.get(0);
     }
@@ -248,9 +256,11 @@ public class VehiclePart {
     }
 
     public Vect3 getNode(final String key) {
+        final double nodeScale = getPart().getNodeScale();
         final String nodeStackBottom = getPart().getProperties().getOptional(key);
         if (nodeStackBottom != null) {
             final Vect3 node = Vect3.parse(nodeStackBottom);
+            node.multiply(nodeScale);
             node.add(getPosition());
             return node;
         }
@@ -278,11 +288,64 @@ public class VehiclePart {
         return VehicleParts.getHighest(relations);
     }
 
-    public List<VehiclePart> getAncestorsWithDescentants() {
-        final List<VehiclePart> relations = new ArrayList<>(parent.getDescendants());
-        relations.remove(getDescendants());
-        relations.remove(this);
-        return relations;
+    public List<VehiclePart> getAncestorsWithDescendants() {
+        if (parent != null) {
+            final List<VehiclePart> relations = new ArrayList<>(parent.getDescendants());
+            relations.add(parent);
+            relations.removeAll(getDescendants());
+            relations.remove(this);
+            return relations;
+        } else {
+            return new ArrayList<>();
+        }
+    }
+
+    public List<String> getLinkedPartIds() {
+        final List<String> ids = new ArrayList<>();
+
+        final List<CfgKeyValueLine> onePartLines = new ArrayList<>();
+        onePartLines.addAll(partGroup.getProperties().getLines("link"));
+        onePartLines.addAll(partGroup.getProperties().getLines("sym"));
+
+        final List<CfgKeyValueLine> twoPartLines = new ArrayList<>();
+        twoPartLines.addAll(partGroup.getProperties().getLines("attN"));
+        twoPartLines.addAll(partGroup.getProperties().getLines("srfN"));
+
+        for (final CfgKeyValueLine line : onePartLines) {
+            ids.add(line.getValue());
+        }
+
+        for (final CfgKeyValueLine line : twoPartLines) {
+            final String value = line.getValue();
+            final int indexOfComma = value.indexOf(',');
+            if (indexOfComma >= 0) {
+                ids.add(value.substring(indexOfComma + 1));
+            } else {
+                ids.add(value);
+            }
+        }
+
+        return ids;
+    }
+
+    public void removeLinkedPart(final String id) {
+
+        final List<CfgKeyValueLine> linkLines = new ArrayList<>();
+        linkLines.addAll(partGroup.getProperties().getLines("link"));
+        linkLines.addAll(partGroup.getProperties().getLines("sym"));
+        linkLines.addAll(partGroup.getProperties().getLines("attN"));
+        linkLines.addAll(partGroup.getProperties().getLines("srfN"));
+
+        for (final CfgKeyValueLine line : linkLines) {
+            if (line.getValue().contains(id)) {
+                partGroup.getModifiableProperties().removeLine(line);
+            }
+        }
+    }
+
+    public void addLink(final VehiclePart child) {
+        final CfgProperties properties = partGroup.getModifiableProperties();
+        properties.addLine(new CfgKeyValueLine("\t", "link", child.getId()));
     }
 
 }

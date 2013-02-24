@@ -18,14 +18,21 @@ import java.util.TreeSet;
 import com.lewisd.ksp.craftstats.cfg.CfgGroup;
 import com.lewisd.ksp.craftstats.cfg.CfgKeyValueLine;
 import com.lewisd.ksp.craftstats.cfg.CfgLine;
+import com.lewisd.ksp.craftstats.cfg.CfgProperties;
 import com.lewisd.ksp.craftstats.gamedata.Environment;
+import com.lewisd.ksp.craftstats.gamedata.Part;
 import com.lewisd.ksp.craftstats.gamedata.PartTitleComparator;
+import com.lewisd.ksp.craftstats.gamedata.Parts;
 import com.lewisd.ksp.craftstats.gamedata.Resources;
 import com.lewisd.ksp.craftstats.util.Vect3;
 
 public class Vehicle {
 
+    public static final long HIGH_UID = 4294878628L;
+    public static final long UID_INCREMENT = 24;
+
     private static final double DRAG_MULTIPLIER = 0.008;
+
 
     private final Map<String, VehiclePart> partByIdMap = new HashMap<>();
     private final SortedMap<Integer, Stage> stages = new TreeMap<>();
@@ -37,8 +44,21 @@ public class Vehicle {
     private Vect3 velocity;
     private double pitch;
 
-    public Vehicle(final CfgGroup root, final List<VehiclePart> vehicleParts, final Resources resources) {
+    public Vehicle(final CfgGroup root, final Parts parts, final Resources resources) {
         vehicleGroup = root;
+
+        final List<VehiclePart> vehicleParts = new ArrayList<>();
+        final List<CfgGroup> partGroups = root.getSubgroup("PART");
+        for (final CfgGroup partGroup : partGroups) {
+            final CfgProperties cfgProperties = partGroup.getProperties();
+            final String id = cfgProperties.get("part");
+            final String partName = id.substring(0, id.indexOf('_'));
+            final Part part = parts.getPart(partName);
+
+            final VehiclePart vehiclePart = new VehiclePart(part, partGroup, resources);
+            vehiclePart.setVehicle(this);
+            vehicleParts.add(vehiclePart);
+        }
 
         rootPart = vehicleParts.get(0);
         for (final VehiclePart vehiclePart : vehicleParts) {
@@ -54,9 +74,17 @@ public class Vehicle {
         findLaunchClamps();
     }
 
+    public Vehicle cloneFromCfg(final Parts parts, final Resources resources) {
+        return new Vehicle(vehicleGroup, parts, resources);
+    }
+
     public void addParts(final Collection<VehiclePart> vehicleParts) {
         for (final VehiclePart vehiclePart : vehicleParts) {
             final String id = vehiclePart.getId();
+            if (partByIdMap.containsKey(id)) {
+                throw new IllegalArgumentException("Cannot add part with duplicate id " + id);
+            }
+            vehiclePart.setVehicle(this);
             partByIdMap.put(id, vehiclePart);
             vehicleGroup.addSubgroup(vehiclePart.getCfgGroup());
         }
@@ -93,6 +121,7 @@ public class Vehicle {
 
     public void reposition(final Vect3 offset) {
         for (final VehiclePart vehiclePart : partByIdMap.values()) {
+            final Vect3 oldPosition = vehiclePart.getPosition();
             final Vect3 partPosition = vehiclePart.getPosition();
             partPosition.add(offset);
             vehiclePart.setPosition(partPosition);
@@ -224,21 +253,21 @@ public class Vehicle {
             return new Vect3(0, accel, 0);
         }
         */
-        
+
         final Vect3 atmosphereVelocity = getEnvironment().getRotationalVelocityVector(getPosition());
         final Vect3 velocity = getVelocity();
-        
+
         final Vect3 relativeAtmosphericVelocity = new Vect3(velocity);
         relativeAtmosphericVelocity.subtract(atmosphereVelocity);
-        
+
         final double v = relativeAtmosphericVelocity.getLength();
         double maximumDrag = 0;
-        for (VehiclePart vehiclePart : getCurrentStage().getAllParts()) {
+        for (final VehiclePart vehiclePart : getCurrentStage().getAllParts()) {
             maximumDrag += vehiclePart.getPart().getMaximumDrag() * vehiclePart.getMass();
         }
-        double density = getEnvironment().getAtmosphere().getDensity(getAltitude());
-        final double dragAccel = (0.008 * 0.5 * maximumDrag * density * v*v) / getMass();
-        
+        final double density = getEnvironment().getAtmosphere().getDensity(getAltitude());
+        final double dragAccel = (DRAG_MULTIPLIER * 0.5 * maximumDrag * density * v * v) / getMass();
+
         final Vect3 dragVector = relativeAtmosphericVelocity.unitVector(-dragAccel);
         return dragVector;
     }
@@ -258,7 +287,7 @@ public class Vehicle {
             final String oldId = vehiclePart.getId();
             vehiclePart.setUidWithoutRemap(uid);
             newIdByOldIdMap.put(oldId, vehiclePart.getId());
-            uid -= 24;
+            uid -= UID_INCREMENT;
         }
 
         remap(vehicleGroup, newIdByOldIdMap);
@@ -448,11 +477,88 @@ public class Vehicle {
         return decouplers;
     }
 
-    public void removeParts(final Set<VehiclePart> vehicleParts) {
+    public void removeParts(final Collection<VehiclePart> vehicleParts) {
+        final Set<String> removedIds = new HashSet<>();
         for (final VehiclePart vehiclePart : vehicleParts) {
             vehicleGroup.removeSubgroup(vehiclePart.getCfgGroup());
+            final String id = vehiclePart.getId();
+            removedIds.add(id);
         }
-        // FIXME: remove any missing connections
+        partByIdMap.keySet().removeAll(removedIds);
+
+        /*
+        for (final Map.Entry<String, VehiclePart> entry : partByIdMap.entrySet()) {
+            final VehiclePart vehiclePart = entry.getValue();
+            final CfgGroup cfgGroup = vehiclePart.getCfgGroup();
+
+            for (final VehiclePart removedPart : vehicleParts) {
+                final CfgProperties properties = cfgGroup.getModifiableProperties();
+                final List<CfgLine> lines = new ArrayList<>(properties.getLines());
+                for (final CfgLine line : lines) {
+                    if (line instanceof CfgKeyValueLine) {
+                        final CfgKeyValueLine cfgKeyLine = (CfgKeyValueLine) line;
+                        if (((CfgKeyValueLine) line).getValue().contains(removedPart.getId())) {
+                            properties.removeLine(line);
+                        }
+                    }
+                }
+            }
+        }
+        */
+
+        // Remove any connections to missing parts
+
+        for (final Map.Entry<String, VehiclePart> entry : partByIdMap.entrySet()) {
+            final VehiclePart vehiclePart = entry.getValue();
+            final List<String> linkedIds = vehiclePart.getLinkedPartIds();
+            for (final String id : linkedIds) {
+                if (removedIds.contains(id)) {
+                    vehiclePart.removeLinkedPart(id);
+                }
+            }
+        }
+
+    }
+
+    public void repairLinks() {
+        removeLinks();
+        rebuildLinks();
+    }
+
+    protected void removeLinks() {
+        for (final VehiclePart vehiclePart : partByIdMap.values()) {
+            final CfgProperties properties = vehiclePart.getCfgGroup().getModifiableProperties();
+            final List<CfgKeyValueLine> links = properties.getLines("link");
+            for (final CfgKeyValueLine link : links) {
+                properties.removeLine(link);
+            }
+        }
+    }
+
+    private void rebuildLinks() {
+        for (final VehiclePart vehiclePart : partByIdMap.values()) {
+            for (final VehiclePart child : vehiclePart.getChildren()) {
+                vehiclePart.addLink(child);
+            }
+        }
+    }
+
+    public void shiftStages(final int stageIncrement) {
+        for (final VehiclePart vehiclePart : partByIdMap.values()) {
+            final CfgProperties properties = vehiclePart.getCfgGroup().getModifiableProperties();
+
+            shiftStage(properties, "sqor", stageIncrement);
+            shiftStage(properties, "istg", stageIncrement);
+            shiftStage(properties, "dstg", stageIncrement);
+        }
+    }
+
+    private void shiftStage(final CfgProperties properties, final String key, final int stageIncrement) {
+        final CfgKeyValueLine line = properties.getLine(key);
+        final int stage = Integer.parseInt(line.getValue());
+        if (stage >= 0) {
+            line.setValue(Integer.toString(stage + stageIncrement));
+        }
     }
 
 }

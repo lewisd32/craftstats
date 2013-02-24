@@ -4,18 +4,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 import com.lewisd.ksp.craftstats.cfg.CfgGroup;
-import com.lewisd.ksp.craftstats.cfg.CfgProperties;
 import com.lewisd.ksp.craftstats.cfg.CfgReader;
 import com.lewisd.ksp.craftstats.cfg.CfgWriter;
-import com.lewisd.ksp.craftstats.gamedata.Part;
 import com.lewisd.ksp.craftstats.gamedata.Parts;
 import com.lewisd.ksp.craftstats.gamedata.Resources;
 import com.lewisd.ksp.craftstats.vehicle.Vehicle;
-import com.lewisd.ksp.craftstats.vehicle.VehiclePart;
 
 public class VehicleLoader {
 
@@ -41,23 +36,7 @@ public class VehicleLoader {
 
         final CfgGroup root = cfgReader.readCfg(in);
 
-        final List<VehiclePart> vehicleParts = new ArrayList<>();
-        final List<CfgGroup> partGroups = root.getSubgroup("PART");
-        for (final CfgGroup partGroup : partGroups) {
-            final CfgProperties cfgProperties = partGroup.getProperties();
-            final String id = cfgProperties.get("part");
-            final String partName = id.substring(0, id.indexOf('_'));
-            final Part part = parts.getPart(partName);
-
-            final VehiclePart vehiclePart = new VehiclePart(part, partGroup, resources);
-            vehicleParts.add(vehiclePart);
-        }
-
-        final Vehicle vehicle = new Vehicle(root, vehicleParts, resources);
-
-        for (final VehiclePart vehiclePart : vehicleParts) {
-            vehiclePart.setVehicle(vehicle);
-        }
+        final Vehicle vehicle = new Vehicle(root, parts, resources);
 
         return vehicle;
     }

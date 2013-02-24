@@ -21,7 +21,8 @@ There are a number of different command-line tools included in Craft Stats.
 * StageParts - Shows what parts will still be on the ship in each stage, as well as what parts get dropped.
 * VehicleStats - Shows mass, thrust, acceleration, and much more for the ship, as well as each stage.
 * AscentSim - INCOMPLETE: Attempts to simulate an ascent from the surface of any body in KSP.
-* MergeCraft - NOT STARTED: Will allow merging any number of vehicles together to easily build multi-stage rockets.
+* MergeCraft - Merges any number of vehicles together to easily build multi-stage rockets.
+* ChangeCommandPod - Changes which pod in a vehicle is the primary command pod.
 
 All tools need to be told where to find the KSP data files.  This can be done in one of two ways:
 * Set a KSP_HOME environment variable that points to your KSP directory.
@@ -39,6 +40,7 @@ Optional params:
 
 Example:
 parthierarchy -c testrocket.craft -v
+
 
 ### StageParts
 
@@ -69,10 +71,31 @@ Optional params:
 Example:
 vehiclestats -c testrocket.craft -v -s
 
+
 ### AscentSim
 
 INCOMPLETE: Attempts to simulate an ascent from the surface of any body in KSP.
 
+
 ### MergeCraft
 
-NOT STARTED: Will allow merging any number of vehicles together to easily build multi-stage rockets.
+Merges any number of vehicles together to easily build multi-stage rockets.
+
+Required params:
+-c or --craft       Path to a vehicle .craft file to merge. Must be specified multiple times. First craft will be on top of the resulting rocket.
+-d or --destination Path to the write the merged vehicle .craft to. Required.
+
+Optional params:
+-v or --verbose More verbose output.
+
+
+### ChangeCommandPod
+
+Changes which pod in a vehicle is the primary command pod.
+
+Required params:
+-c or --craft  The path to the .craft file to load.
+-i or --id     ID of command pod to set as primary. Required.
+
+Optional params:
+-v or --verbose More verbose output.
