@@ -3,7 +3,7 @@
   <parent>
     <artifactId>craftstats-parent</artifactId>
     <groupId>com.lewisd.ksp</groupId>
-    <version>0.2-SNAPSHOT</version>
+    <version>0.2</version>
     <relativePath>..</relativePath>
   </parent>
   <artifactId>craftstats-util</artifactId>
