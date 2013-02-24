@@ -88,6 +88,8 @@ Required params:
 Optional params:
 -v or --verbose More verbose output.
 
+Example:
+mergecraft -c bottomstage.craft -c middlestage.craft -c topstage.craft -c payload.craft -d merged.craft
 
 ### ChangeCommandPod
 
@@ -99,3 +101,6 @@ Required params:
 
 Optional params:
 -v or --verbose More verbose output.
+
+Example:
+changecommandpod -c testrocket.craft -i Mark1-2Pod_4292406272
